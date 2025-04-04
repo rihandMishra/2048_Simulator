@@ -218,6 +218,10 @@ class Game2048GUI:
         self.grid_frame.grid()
 
         self.cells = []
+        self.milestones = {128: None, 256: None, 512: None, 1024: None, 2048: None}
+        self.milestone_label = tk.Label(root, text="", font=("Helvetica", 12), justify="left")
+        self.milestone_label.grid()
+
         for i in range(4):
             row = []
             for j in range(4):
@@ -248,6 +252,17 @@ class Game2048GUI:
             if is_game_over(self.board):
                 self.show_game_over()
 
+    def check_milestones(self):
+    flat_board = [tile for row in self.board for tile in row]
+    for tile in self.milestones:
+        if self.milestones[tile] is None and tile in flat_board:
+            self.milestones[tile] = self.move_count
+    milestone_text = "Milestones:\n" + "\n".join(
+        f"{k}: {v if v is not None else 'Not reached'}" for k, v in self.milestones.items()
+    )
+    self.milestone_label.config(text=milestone_text)
+
+
     def show_game_over(self):
         tk.Label(self.root, text="GAME OVER", font=("Helvetica", 24, "bold"), fg="red").grid()
 
@@ -262,6 +277,8 @@ class Game2048GUI:
             self.make_move(direction_map[move])
             self.move_count += 1
             self.move_label.config(text=f"Moves: {self.move_count}")
+            self.check_milestones()
+
 
         self.root.after(100, self.autoplay)
 
