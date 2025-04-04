@@ -94,16 +94,18 @@ def calculate_monotonicity(board):
             if col[i] >= col[i + 1]:
                 score += 1
     return score
+# adaptive depth inorder to improve the performance in the endgame and the number of empty and usable tiles decrease    
 def get_adaptive_depth(board):
     empty = sum(row.count(0) for row in board)
     return 5 if empty <= 3 else 3
+# prioritizing the empty tiles and giving a penalty if the board has less than or equal to two tiles
 def panic_penalty(board):
     empty_tiles = sum(row.count(0) for row in board)
     if empty_tiles <= 2:
         return -2000  # big penalty when the board is full
     return 0
 '''
-# one of the metrics which will be used to evaluate the hueristics 
+# one of the metrics which will be used to evaluate the hueristics (did not work thats why its commented out)
 
 def vertical_stack_bonus(board):
     stack_score = 0
@@ -113,7 +115,7 @@ def vertical_stack_bonus(board):
             stack_score += col[0]
     return stack_score
 '''
-# one of the metrics which will be used to evaluate the hueristics 
+# corner bonus to keep the max tile in the corner which makes it easier for the rest of the tiles to merge
 def corner_bonus(board):
     max_tile = max(max(row) for row in board)
     corners = [board[0][0], board[0][3], board[3][0], board[3][3]]
